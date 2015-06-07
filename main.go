@@ -27,11 +27,14 @@ func main() {
 		google.New("332347457774-4uqv02nv511org9ts3n1v933jrckm3og.apps.googleusercontent.com", "gQU6MXtBVYN3o0iiBGO3eyYy", "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom(UseGravatar)
+	r := newRoom(UseFileSystemAvatar)
 
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
+	http.Handle("/upload", &templateHandler{filename: "upload.html"})
+	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 	http.HandleFunc("/auth/", loginHandler)
+	http.HandleFunc("/uploader", uploaderHandler)
 	http.Handle("/room", r)
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
