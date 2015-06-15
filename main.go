@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/objx"
 )
 
+var avatars Avatar = UseFileSystemAvatar
 var host = flag.String("host", ":8080", "The host of the application.")
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 		google.New("332347457774-4uqv02nv511org9ts3n1v933jrckm3og.apps.googleusercontent.com", "gQU6MXtBVYN3o0iiBGO3eyYy", "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom(UseFileSystemAvatar)
+	r := newRoom()
 
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
