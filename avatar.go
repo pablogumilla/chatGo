@@ -9,6 +9,9 @@ import (
 // AuthAvatar implement picture by auth cookie information
 type AuthAvatar struct{}
 
+// TryAvatar to try all avatars possibilities
+type TryAvatars []Avatar
+
 // UseAuthAvatar is a public variable of AuthAvatar
 var UseAuthAvatar AuthAvatar
 
@@ -49,6 +52,16 @@ func (_ FileSystemAvatar) GetAvatarURL(u ChatUser) (string, error) {
 			if match, _ := path.Match(u.UniqueID()+"*", file.Name()); match {
 				return "/avatars/" + file.Name(), nil
 			}
+		}
+	}
+
+	return "", ErrNoAvatarURL
+}
+
+func (a TryAvatars) GetAvatarURL(u ChatUser) (string, error) {
+	for _, avatar := range a {
+		if url, err := avatar.GetAvatarURL(u); err == nil {
+			return url, nil
 		}
 	}
 
